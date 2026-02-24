@@ -1,5 +1,3 @@
 # Project Tracks
 This file tracks all major tracks for the project. Each track has its own detailed plan in its respective folder.
 ---
-- [x] **Track: Initialize VS Code Extension and Basic Webview Structure**
-  *Link: [./tracks/init_extension_20260224/](./tracks/init_extension_20260224/)*
