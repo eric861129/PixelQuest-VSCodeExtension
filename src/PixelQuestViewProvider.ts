@@ -39,6 +39,13 @@ export class PixelQuestViewProvider implements vscode.WebviewViewProvider {
 		});
 	}
 
+	public updateAction(action: string, data: string) {
+		if (this._view) {
+			this._view.show?.(true); // target the webview and make it visible
+			this._view.webview.postMessage({ type: 'updateAction', action, data });
+		}
+	}
+
 	private _getHtmlForWebview(webview: vscode.Webview) {
 		// Use a local script and style
 		const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'main.js'));

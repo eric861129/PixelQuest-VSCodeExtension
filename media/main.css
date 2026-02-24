@@ -20,5 +20,24 @@ body {
 
 #status-bar {
     margin-top: 10px;
-    font-size: 12px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #ffcc00;
+}
+
+#activity-log {
+    margin-top: 15px;
+    width: 100%;
+    max-height: 100px;
+    overflow-y: hidden;
+    font-size: 11px;
+    color: #aaa;
+}
+
+.log-entry {
+    border-bottom: 1px solid #333;
+    padding: 2px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }

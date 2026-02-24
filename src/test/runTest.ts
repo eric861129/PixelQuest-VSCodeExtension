@@ -6,7 +6,11 @@ async function main() {
 		const extensionDevelopmentPath = path.resolve(__dirname, '../../');
 		const extensionTestsPath = path.resolve(__dirname, './suite/index');
 
-		await runTests({ extensionDevelopmentPath, extensionTestsPath });
+		await runTests({ 
+			extensionDevelopmentPath, 
+			extensionTestsPath,
+			launchArgs: ['--enable-proposed-api', 'eric861129.pixelquest-vscode-extension']
+		});
 	} catch (err) {
 		console.error('Failed to run tests');
 		process.exit(1);
