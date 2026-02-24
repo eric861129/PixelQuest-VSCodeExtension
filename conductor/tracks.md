@@ -3,6 +3,6 @@ This file tracks all major tracks for the project. Each track has its own detail
 ---
 ---
 
-- [~] **Track: Terminal Monitor and Action Mapper PoC**
+- [x] **Track: Terminal Monitor and Action Mapper PoC**
 
   *Link: [./tracks/terminal_mapper_20260224/](./tracks/terminal_mapper_20260224/)*

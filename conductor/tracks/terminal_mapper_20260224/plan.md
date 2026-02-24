@@ -9,6 +9,6 @@
 - [x] Task: Conductor - User Manual Verification 'Terminal Monitoring and Action Mapping' (Protocol in workflow.md)
 
 ## Phase 2: Webview Sidebar Integration (PoC)
-- [~] Task: Update PixelQuestViewProvider to receive messages from ActionMapper.
-- [ ] Task: Update Webview frontend to display status and activity log.
-- [ ] Task: Conductor - User Manual Verification 'Webview Sidebar Integration' (Protocol in workflow.md)
+- [x] Task: Update PixelQuestViewProvider to receive messages from ActionMapper. (1ae103e)
+- [x] Task: Update Webview frontend to display status and activity log. (1ae103e)
+- [x] Task: Conductor - User Manual Verification 'Webview Sidebar Integration' (Protocol in workflow.md)
