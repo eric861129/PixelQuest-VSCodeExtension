@@ -5,7 +5,7 @@
     const ctx = canvas.getContext('2d');
     const statusBar = document.getElementById('status-bar');
     
-    // Activity log container (create if not exists or just append to body)
+    // Activity log container
     let logContainer = document.getElementById('activity-log');
     if (!logContainer) {
         logContainer = document.createElement('div');
@@ -17,7 +17,7 @@
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = '#00ff00';
-        ctx.fillRect(10, 10, 20, 20); // A small green square for now
+        ctx.fillRect(10, 10, 20, 20); // A small green square
     }
 
     draw();
@@ -25,21 +25,20 @@
     window.addEventListener('message', event => {
         const message = event.data;
         switch (message.type) {
-            case 'updateStatus':
-                statusBar.innerText = message.value;
-                break;
             case 'updateAction':
-                updateUI(message.action, message.data, message.prefix);
+                updateUI(message.statusText, message.logText, message.prefix);
                 break;
         }
     });
 
-    function updateUI(action, data, prefix) {
-        statusBar.innerHTML = `${prefix || 'Status'}: ${action}`;
+    function updateUI(statusText, logText, prefix) {
+        // Update the big status text
+        statusBar.innerHTML = `${prefix || 'Status'}: ${statusText}`;
         
+        // Update the activity log below
         const entry = document.createElement('div');
         entry.className = 'log-entry';
-        entry.innerText = `> ${data}`;
+        entry.innerText = `> ${logText}`;
         logContainer.prepend(entry);
         
         // Keep only last 5 entries
@@ -47,7 +46,6 @@
             logContainer.removeChild(logContainer.lastChild);
         }
 
-        // Trigger a simple "flash" effect on canvas for action
         flashCanvas();
     }
 
@@ -57,7 +55,6 @@
         setTimeout(() => draw(), 100);
     }
 
-    // Post message to VS Code extension
     vscode.postMessage({ type: 'action', value: 'Ready!' });
 
 }());

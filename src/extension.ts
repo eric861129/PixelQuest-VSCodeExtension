@@ -8,6 +8,7 @@ import { getStrings, format } from './i18n';
 
 export async function activate(context: vscode.ExtensionContext) {
 	const strings = getStrings();
+	console.log('PixelQuest: Activating...');
 	console.log(strings.extension_active);
 
 	const logParser = new LogParser();
@@ -17,22 +18,26 @@ export async function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(
 		vscode.window.registerWebviewViewProvider(PixelQuestViewProvider.viewType, provider));
 
-	// Strategy: Monitor Gemini CLI Logs instead of Terminal Data
+	// Strategy: Monitor Gemini CLI Logs associated with the current workspace
 	const homeDir = os.homedir();
 	const geminiTmpDir = path.join(homeDir, '.gemini', 'tmp');
-	
-	const latestLog = await logObserver.findLatestLog(geminiTmpDir);
-	if (latestLog) {
-		console.log(`Monitoring Gemini Log: ${latestLog}`);
-		logObserver.start(latestLog, (newContent) => {
-			const state = logParser.parseNewLogs(newContent);
-			if (state) {
-				console.log(`Detected Agent State: ${state}`);
-				provider.updateAction(state, logParser.stripAnsi(newContent));
-			}
-		});
+	const workspaceFolder = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+
+		if (workspaceFolder) {
+			console.log(`PixelQuest: Searching for logs associated with ${workspaceFolder}`);
+			const latestLog = await logObserver.findLogForWorkspace(geminiTmpDir, workspaceFolder);
+			if (latestLog) {
+				console.log(`PixelQuest: [MONITORING] -> ${latestLog}`);
+				logObserver.start(latestLog, (newContent) => {								const parsed = logParser.parseNewLogs(newContent);
+								if (parsed) {
+									console.log(`Detected Agent State: ${parsed.state} - ${parsed.statusText}`);
+									provider.updateAction(parsed.state, parsed.statusText, parsed.logText);
+								}
+							});		} else {
+			console.warn('Could not find a Gemini CLI logs.json for this workspace.');
+		}
 	} else {
-		console.warn('Could not find any Gemini CLI logs.json to monitor.');
+		console.warn('No workspace folder open. Cannot monitor project-specific logs.');
 	}
 
 	context.subscriptions.push({
