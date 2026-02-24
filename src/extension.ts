@@ -1,31 +1,42 @@
 import * as vscode from 'vscode';
+import * as path from 'path';
+import * as os from 'os';
 import { PixelQuestViewProvider } from './PixelQuestViewProvider';
-import { TerminalMonitor } from './TerminalMonitor';
-import { ActionMapper } from './ActionMapper';
+import { LogObserver } from './LogObserver';
+import { LogParser } from './LogParser';
 import { getStrings, format } from './i18n';
 
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext) {
 	const strings = getStrings();
 	console.log(strings.extension_active);
 
-	const actionMapper = new ActionMapper();
-	const terminalMonitor = new TerminalMonitor();
+	const logParser = new LogParser();
+	const logObserver = new LogObserver();
 	const provider = new PixelQuestViewProvider(context.extensionUri);
 
 	context.subscriptions.push(
 		vscode.window.registerWebviewViewProvider(PixelQuestViewProvider.viewType, provider));
 
-	terminalMonitor.start((data) => {
-		const action = actionMapper.mapAction(data);
-		if (action) {
-			console.log(format(strings.terminal_detected, action, data));
-			// Send to webview
-			provider.updateAction(action, data);
-		}
-	});
+	// Strategy: Monitor Gemini CLI Logs instead of Terminal Data
+	const homeDir = os.homedir();
+	const geminiTmpDir = path.join(homeDir, '.gemini', 'tmp');
+	
+	const latestLog = await logObserver.findLatestLog(geminiTmpDir);
+	if (latestLog) {
+		console.log(`Monitoring Gemini Log: ${latestLog}`);
+		logObserver.start(latestLog, (newContent) => {
+			const state = logParser.parseNewLogs(newContent);
+			if (state) {
+				console.log(`Detected Agent State: ${state}`);
+				provider.updateAction(state, logParser.stripAnsi(newContent));
+			}
+		});
+	} else {
+		console.warn('Could not find any Gemini CLI logs.json to monitor.');
+	}
 
 	context.subscriptions.push({
-		dispose: () => terminalMonitor.stop()
+		dispose: () => logObserver.stop()
 	});
 
 	const disposable = vscode.commands.registerCommand('pixelquest-vscode-extension.helloWorld', () => {
