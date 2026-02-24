@@ -5,5 +5,5 @@
 - [x] Task: Conductor - User Manual Verification 'Project Initialization' (Protocol in workflow.md)
 
 ## Phase 2: Webview Integration
-- [~] Task: Implement WebviewViewProvider.
-- [ ] Task: Conductor - User Manual Verification 'Webview Integration' (Protocol in workflow.md)
+- [x] Task: Implement WebviewViewProvider. (47c8558)
+- [x] Task: Conductor - User Manual Verification 'Webview Integration' (Protocol in workflow.md)
