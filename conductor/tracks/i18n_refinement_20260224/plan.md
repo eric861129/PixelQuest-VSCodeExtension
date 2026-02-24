@@ -6,6 +6,6 @@
 - [x] Task: Conductor - User Manual Verification 'Internationalization' (Protocol in workflow.md)
 
 ## Phase 2: Terminal Monitor Refinement
-- [~] Task: Enhance TerminalMonitor to filter out active user input.
-- [ ] Task: Refine ActionMapper to work with refined monitor data.
-- [ ] Task: Conductor - User Manual Verification 'Terminal Monitor Refinement' (Protocol in workflow.md)
+- [x] Task: Enhance TerminalMonitor to filter out active user input. (2c8fc6c)
+- [x] Task: Refine ActionMapper to work with refined monitor data. (2c8fc6c)
+- [x] Task: Conductor - User Manual Verification 'Terminal Monitor Refinement' (Protocol in workflow.md)
