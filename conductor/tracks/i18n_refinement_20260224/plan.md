@@ -1,8 +1,8 @@
 # Implementation Plan
 ## Phase 1: Internationalization (I18n)
 - [x] Task: Set up vscode-nls infrastructure. (0d886c4)
-- [~] Task: Refactor UI strings to use localization.
-- [ ] Task: Reorganize documentation (README).
+- [x] Task: Refactor UI strings to use localization. (d16d8ff)
+- [~] Task: Reorganize documentation (README).
 - [ ] Task: Conductor - User Manual Verification 'Internationalization' (Protocol in workflow.md)
 
 ## Phase 2: Terminal Monitor Refinement
