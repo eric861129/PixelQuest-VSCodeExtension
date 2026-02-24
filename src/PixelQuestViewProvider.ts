@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { getStrings } from './i18n';
 
 export class PixelQuestViewProvider implements vscode.WebviewViewProvider {
 
@@ -41,8 +42,14 @@ export class PixelQuestViewProvider implements vscode.WebviewViewProvider {
 
 	public updateAction(action: string, data: string) {
 		if (this._view) {
+			const strings = getStrings();
 			this._view.show?.(true); // target the webview and make it visible
-			this._view.webview.postMessage({ type: 'updateAction', action, data });
+			this._view.webview.postMessage({ 
+				type: 'updateAction', 
+				action, 
+				data,
+				prefix: strings.status_prefix
+			});
 		}
 	}
 
@@ -53,6 +60,8 @@ export class PixelQuestViewProvider implements vscode.WebviewViewProvider {
 
 		// Use a nonce to only allow a specific script to be run.
 		const nonce = getNonce();
+
+		const strings = getStrings();
 
 		return `<!DOCTYPE html>
 			<html lang="en">
@@ -76,7 +85,7 @@ export class PixelQuestViewProvider implements vscode.WebviewViewProvider {
 				<div id="game-container">
 					<h1>PixelQuest</h1>
 					<canvas id="game-canvas"></canvas>
-					<div id="status-bar">Waiting for command...</div>
+					<div id="status-bar">${strings.waiting_command}</div>
 				</div>
 
 				<script nonce="${nonce}" src="${scriptUri}"></script>

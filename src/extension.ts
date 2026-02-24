@@ -2,9 +2,11 @@ import * as vscode from 'vscode';
 import { PixelQuestViewProvider } from './PixelQuestViewProvider';
 import { TerminalMonitor } from './TerminalMonitor';
 import { ActionMapper } from './ActionMapper';
+import { getStrings, format } from './i18n';
 
 export function activate(context: vscode.ExtensionContext) {
-	console.log('Congratulations, your extension "pixelquest-vscode-extension" is now active!');
+	const strings = getStrings();
+	console.log(strings.extension_active);
 
 	const actionMapper = new ActionMapper();
 	const terminalMonitor = new TerminalMonitor();
@@ -16,7 +18,7 @@ export function activate(context: vscode.ExtensionContext) {
 	terminalMonitor.start((data) => {
 		const action = actionMapper.mapAction(data);
 		if (action) {
-			console.log(`Detected RPG Action: ${action} from data: ${data}`);
+			console.log(format(strings.terminal_detected, action, data));
 			// Send to webview
 			provider.updateAction(action, data);
 		}
@@ -27,7 +29,7 @@ export function activate(context: vscode.ExtensionContext) {
 	});
 
 	const disposable = vscode.commands.registerCommand('pixelquest-vscode-extension.helloWorld', () => {
-		vscode.window.showInformationMessage('Hello World from PixelQuest!');
+		vscode.window.showInformationMessage(strings.hello_world);
 	});
 
 	context.subscriptions.push(disposable);

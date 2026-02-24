@@ -29,13 +29,13 @@
                 statusBar.innerText = message.value;
                 break;
             case 'updateAction':
-                updateUI(message.action, message.data);
+                updateUI(message.action, message.data, message.prefix);
                 break;
         }
     });
 
-    function updateUI(action, data) {
-        statusBar.innerHTML = `[狀態：${action}]`;
+    function updateUI(action, data, prefix) {
+        statusBar.innerHTML = `${prefix || 'Status'}: ${action}`;
         
         const entry = document.createElement('div');
         entry.className = 'log-entry';
