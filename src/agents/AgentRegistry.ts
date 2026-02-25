@@ -1,12 +1,16 @@
 import { IAgentMapper, AgentAction } from './types';
-import { GeminiMapper } from './GeminiMapper';
 
 export class AgentRegistry {
     private _mappers: IAgentMapper[] = [];
     private _activeMapper: IAgentMapper | undefined;
 
-    constructor() {
-        this._mappers.push(new GeminiMapper());
+    constructor() {}
+
+    /**
+     * Registers a new agent mapper into the registry.
+     */
+    public registerMapper(mapper: IAgentMapper) {
+        this._mappers.push(mapper);
     }
 
     public process(input: string): AgentAction | undefined {
@@ -23,11 +27,7 @@ export class AgentRegistry {
 
         // 2. Map action if an agent is active
         if (this._activeMapper) {
-            const action = this._activeMapper.mapAction(input);
-            
-            // Optional: detect agent switch if needed
-            
-            return action;
+            return this._activeMapper.mapAction(input);
         }
 
         return undefined;

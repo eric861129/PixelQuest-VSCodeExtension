@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { PixelQuestViewProvider } from './PixelQuestViewProvider';
 import { TerminalMonitor } from './TerminalMonitor';
 import { AgentRegistry } from './agents/AgentRegistry';
+import { GeminiMapper } from './agents/GeminiMapper';
 import { getStrings } from './i18n';
 
 export async function activate(context: vscode.ExtensionContext) {
@@ -9,6 +10,8 @@ export async function activate(context: vscode.ExtensionContext) {
 	console.log('PixelQuest: Activating Multi-Agent Terminal Monitor...');
 
 	const agentRegistry = new AgentRegistry();
+	agentRegistry.registerMapper(new GeminiMapper());
+	
 	const terminalMonitor = new TerminalMonitor();
 	const provider = new PixelQuestViewProvider(context.extensionUri);
 
