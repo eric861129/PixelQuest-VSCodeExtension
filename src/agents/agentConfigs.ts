@@ -6,88 +6,76 @@ export const AGENT_CONFIGS: AgentConfig[] = [
         detectionPatterns: ['gemini-cli'],
         rules: [
             {
-                pattern: 'git\s+(commit|push|pull|branch|checkout|add)',
+                // git commit/push -> Saving
+                pattern: '✓\\\\s+git\\\\s+(commit|push|pull|branch|checkout|add)',
                 state: 'WORKING',
                 category: 'GIT',
-                statusTexts: ['Saving at Bonfire...', 'Resting at Fountain...', 'Updating World Map...'],
-                logTemplate: 'Save: {{match2}} - Progress secured'
+                statusTexts: ['Saving at Bonfire...', 'Resting at Sanctuary...', 'Writing Chronicle...'],
+                logTemplate: 'Save Point: Progress secured via Git {{match1}}'
             },
             {
-                pattern: '(npm|yarn|pnpm|pip|cargo|brew)\s+(install|add|get)',
+                // npm install -> Shopping
+                pattern: '✓?\\\\s?(npm|yarn|pnpm|pip|cargo|brew)\\\\s+(install|add|get|update)',
                 state: 'WORKING',
                 category: 'SHOPPING',
-                statusTexts: ['Buying Potions...', 'Upgrading Gear...', 'Restocking Supplies...'],
-                logTemplate: 'Shop: Acquiring dependencies via {{match1}}'
+                statusTexts: ['Buying Healing Potions...', 'Upgrading Excalibur...', 'Restocking Supplies...', 'Hiring Mercenaries...'],
+                logTemplate: 'Shop: Acquiring {{match1}} packages for the journey'
             },
             {
-                pattern: '(WriteFile|Edit|replace|create_or_update_file)',
+                // File operations -> Attacking
+                pattern: '(✓\\\\s+)?(WriteFile|Edit|replace|create_or_update_file)',
                 state: 'WORKING',
                 category: 'FILE_WRITE',
                 statusTexts: ['Sword Slash!', 'Magic Missile!', 'Critical Hit!', 'Backstab!'],
                 logTemplate: 'Combat: Dealt damage to {{target}}'
             },
             {
-                pattern: '(Shell|run_shell_command|command)',
+                // Shell -> Ultimate Skill
+                pattern: '✓\\\\s+(Shell|run_shell_command|command)',
                 state: 'WORKING',
                 category: 'SYSTEM_CMD',
                 statusTexts: ['ULTIMATE RELEASE!', 'Final Heaven!', 'Omnislash!', 'Cataclysm!'],
                 logTemplate: 'Special: System Shockwave unleashed'
             },
             {
-                pattern: '(ReadManyFiles|ReadFile|read_file|get_file_contents)',
+                // Read -> Observing
+                pattern: '(✓\\\\s+)?(ReadManyFiles|ReadFile|read_file|get_file_contents)',
                 state: 'WORKING',
                 category: 'FILE_READ',
                 statusTexts: ['Scanning Weakness...', 'Inspecting Loot...', 'Reading Bestiary...'],
-                logTemplate: 'Scan: Analyzing {{match1}} data'
+                logTemplate: 'Scan: Analyzing {{match2}} data'
             },
             {
-                pattern: '(Action Required|Apply this change)',
+                // Investigation -> Tracking
+                pattern: '(✓\\\\s+)?(grep_search|search_code|list_directory|ReadFolder)',
+                state: 'WORKING',
+                category: 'SEARCH',
+                statusTexts: ['Hunting Tracks...', 'Following Scent...', 'Scanning Horizons...'],
+                logTemplate: 'Track: Seeking target via {{match2}}'
+            },
+            {
+                // Interactive prompts -> Waiting
+                pattern: '(Action Required|Apply this change\\\\?|●\\\\s+\\\\d+\\\\.)',
                 state: 'WAITING',
                 category: 'COMMUNICATION',
-                statusTexts: ['Awaiting Command...', 'King', s, Decision, ..."],",
-                    logTemplate, 'Tactics: Waiting for player direction'],
-                logTemplate: ''
+                statusTexts: ['Awaiting Orders...', "King's Decision..."],
+                logTemplate: 'Tactics: Waiting for player direction'
             },
             {
-                pattern: 'Thinking\.\.\.',
+                // AI generating -> Thinking
+                pattern: 'Thinking\\\\.\\\\.\\\\.',
                 state: 'THINKING',
                 category: 'COMMUNICATION',
                 statusTexts: ['Chanting Spells...', 'Meditating...', 'Strategizing...'],
                 logTemplate: 'Tactics: Planning next tactical move'
             },
             {
+                // Task Complete -> Success
                 pattern: '(task_complete|Exit Code: 0)',
                 state: 'SUCCESS',
                 category: 'UNKNOWN',
                 statusTexts: ['BOSS DEFEATED!', 'LEVEL UP!', 'QUEST CLEAR!'],
                 logTemplate: 'Victory: The realm is safe'
-            }
-        ]
-    },
-    {
-        agentId: 'claude-code',
-        detectionPatterns: ['claude\s+code', 'call:default_api:'],
-        rules: [
-            {
-                pattern: 'write_file|replace',
-                state: 'WORKING',
-                category: 'FILE_WRITE',
-                statusTexts: ['Claude: Quick Strike!', 'Refining Arcana...'],
-                logTemplate: 'Claude Attack: Modifying file'
-            },
-            {
-                pattern: 'grep_search',
-                state: 'WORKING',
-                category: 'SEARCH',
-                statusTexts: ['Claude: Scanning Horizon...', 'Tracking Prey...'],
-                logTemplate: 'Claude Search: Investigating patterns'
-            },
-            {
-                pattern: 'task_complete',
-                state: 'SUCCESS',
-                category: 'UNKNOWN',
-                statusTexts: ['CLAUDE TRIUMPH!'],
-                logTemplate: 'Victory: Claude finished the mission'
             }
         ]
     }

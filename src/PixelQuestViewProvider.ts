@@ -40,15 +40,16 @@ export class PixelQuestViewProvider implements vscode.WebviewViewProvider {
 		});
 	}
 
-	public updateAction(state: string, statusText: string, logText: string) {
+	public updateAction(action: any) {
 		if (this._view) {
 			const strings = getStrings();
-			this._view.show?.(true); // target the webview and make it visible
+			this._view.show?.(true); 
 			this._view.webview.postMessage({ 
 				type: 'updateAction', 
-				state, 
-				statusText,
-				logText,
+				state: action.state, 
+				category: action.category,
+				statusText: action.statusText,
+				logText: action.logText,
 				prefix: strings.status_prefix
 			});
 		}

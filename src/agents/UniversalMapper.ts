@@ -54,10 +54,13 @@ export class UniversalMapper implements IAgentMapper {
         if (target) {
             result = result.replace('{{target}}', target);
         }
-        // Support {{match1}}, {{match2}} etc.
-        match.forEach((val, idx) => {
-            result = result.replace(`{{match${idx}}}`, val || '');
-        });
+        
+        // Match capture groups: {{match1}} for the 1st group, etc.
+        // We skip index 0 because it's the full string match.
+        for (let i = 1; i < match.length; i++) {
+            const val = match[i] || '';
+            result = result.replace(new RegExp(`\\{\\{match${i}\\}\\}`, 'g'), val);
+        }
         return result;
     }
 

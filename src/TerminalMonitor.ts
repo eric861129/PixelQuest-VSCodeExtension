@@ -25,6 +25,12 @@ export class TerminalMonitor {
 	}
 
 	public handleRawData(data: string, callback: (data: string) => void) {
+		// Ignore very small chunks that are likely single character echoes (typing)
+		// but keep \r or \n to ensure line-based processing works.
+		if (data.length === 1 && !data.includes('\r') && !data.includes('\n')) {
+			return;
+		}
+
 		this._buffer += data;
 
 		// Process by lines to ensure complete semantic context

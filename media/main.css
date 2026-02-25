@@ -1,43 +1,61 @@
-body {
-    background-color: transparent;
-    color: white;
-    padding: 10px;
-    font-family: monospace;
-}
-
 #game-container {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #1a1a1a;
+    color: #ffffff;
+    font-family: 'Courier New', Courier, monospace;
+    overflow: hidden;
 }
 
-#game-canvas {
-    width: 200px;
-    height: 150px;
-    border: 1px solid #333;
-    background-color: #000;
+header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+h1 {
+    font-size: 1.5rem;
+    color: #00ff00;
+    text-shadow: 2px 2px #000;
+    margin: 0;
 }
 
 #status-bar {
-    margin-top: 10px;
-    font-size: 14px;
-    font-weight: bold;
+    font-size: 1rem;
+    height: 1.2rem;
     color: #ffcc00;
+    transition: opacity 0.3s ease-in-out;
 }
 
-#activity-log {
-    margin-top: 15px;
-    width: 100%;
+#game-canvas {
+    image-rendering: pixelated;
+    border: 4px solid #333;
+    background-color: #000;
+    width: 256px;
+    height: 256px;
+}
+
+#activity-log-container {
+    width: 90%;
+    margin-top: 10px;
+    background: rgba(0,0,0,0.5);
+    padding: 5px;
+    border: 1px solid #444;
+    font-size: 0.8rem;
     max-height: 100px;
     overflow-y: hidden;
-    font-size: 11px;
-    color: #aaa;
 }
 
 .log-entry {
-    border-bottom: 1px solid #333;
-    padding: 2px 0;
+    color: #aaa;
+    margin-bottom: 2px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.status-fade {
+    opacity: 0;
 }

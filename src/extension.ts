@@ -29,7 +29,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		const action = agentRegistry.process(data);
 		if (action) {
 			outputChannel.appendLine(`[${action.category}] ${action.statusText}: ${action.logText}`);
-			provider.updateAction(action.state, action.statusText, action.logText);
+			provider.updateAction(action);
 		}
 	});
 
