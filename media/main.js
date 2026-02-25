@@ -30,12 +30,17 @@
     }
 
     async function performAction(data) {
-        const { statusText, logText, prefix, category } = data;
+        const { statusText, logText, prefix, category, state } = data;
         currentCategory = category;
+
+        // If it's a SUCCESS (Settlement), we might want to clear the queue 
+        // because the boss is dead, no need to show old attacks.
+        if (state === 'SUCCESS') {
+            actionQueue = []; 
+        }
 
         // 1. Visual Feedback: Fade out old text
         statusBar.classList.add('status-fade');
-        
         await new Promise(r => setTimeout(r, 300));
 
         // 2. Update Content
@@ -46,13 +51,29 @@
         addLogEntry(logText);
         
         // 3. Trigger Canvas Feedback
-        const highImpactCategories = ['FILE_WRITE', 'SYSTEM_CMD', 'SUCCESS', 'GIT'];
-        if (highImpactCategories.includes(category)) {
-            flashCanvas();
+        if (state === 'SUCCESS') {
+            await showSettlement();
+        } else {
+            const highImpactCategories = ['FILE_WRITE', 'SYSTEM_CMD', 'GIT'];
+            if (highImpactCategories.includes(category)) {
+                flashCanvas();
+            }
         }
 
-        // 4. Force a minimum stay duration so player can see the action
+        // 4. Force a minimum stay duration
         await new Promise(r => setTimeout(r, MIN_ACTION_DURATION));
+    }
+
+    async function showSettlement() {
+        // Simple settlement visualization
+        ctx.fillStyle = 'rgba(0, 255, 0, 0.2)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Flash gold/white multiple times
+        for(let i=0; i<3; i++) {
+            flashCanvas();
+            await new Promise(r => setTimeout(r, 200));
+        }
     }
 
     function addLogEntry(text) {

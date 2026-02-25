@@ -70,12 +70,22 @@ export const AGENT_CONFIGS: AgentConfig[] = [
                 logTemplate: 'Tactics: Planning next tactical move'
             },
             {
-                // Task Complete -> Success
-                pattern: '(task_complete|Exit Code: 0)',
+                // Task Complete or Summary -> Success
+                // Including common AI ending phrases for conversational agents
+                pattern: '(task_complete|Exit Code: 0|Summary of changes|Files changed:|Done in \\\\d+ms|✨\\\\s+Done|I have finished|Let me know if you need|Happy coding|Hope this helps|Is there anything else)',
                 state: 'SUCCESS',
                 category: 'UNKNOWN',
                 statusTexts: ['BOSS DEFEATED!', 'LEVEL UP!', 'QUEST CLEAR!'],
                 logTemplate: 'Victory: The realm is safe'
+            },
+            {
+                // Shell Prompt Detection -> Implicit Success
+                // Matches standard Windows/Unix prompts appearing after agent activity
+                pattern: '^([a-zA-Z]:\\\\\\\\.*>|\\\\$|\\\\%|\\\\>|➜\\\\s+.*\\\\s+)',
+                state: 'SUCCESS',
+                category: 'UNKNOWN',
+                statusTexts: ['Boss Escaped...', 'Mission Concluded.', 'Peace Restored.'],
+                logTemplate: 'Victory: Agent returned the realm to the player'
             }
         ]
     }
