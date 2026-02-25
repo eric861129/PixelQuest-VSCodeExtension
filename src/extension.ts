@@ -3,6 +3,8 @@ import { PixelQuestViewProvider } from './PixelQuestViewProvider';
 import { TerminalMonitor } from './TerminalMonitor';
 import { AgentRegistry } from './agents/AgentRegistry';
 import { GeminiMapper } from './agents/GeminiMapper';
+import { ClaudeCodeMapper } from './agents/ClaudeCodeMapper';
+import { CodexMapper } from './agents/CodexMapper';
 import { getStrings } from './i18n';
 
 export async function activate(context: vscode.ExtensionContext) {
@@ -11,6 +13,8 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	const agentRegistry = new AgentRegistry();
 	agentRegistry.registerMapper(new GeminiMapper());
+	agentRegistry.registerMapper(new ClaudeCodeMapper());
+	agentRegistry.registerMapper(new CodexMapper());
 	
 	const terminalMonitor = new TerminalMonitor();
 	const provider = new PixelQuestViewProvider(context.extensionUri);

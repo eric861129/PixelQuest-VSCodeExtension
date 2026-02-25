@@ -6,8 +6,9 @@
 - [x] Task: Conductor - User Manual Verification 'Gemini CLI Terminal Monitoring' (Protocol in workflow.md)
 
 ## Phase 2: Framework for Codex & Claude Code
-- [~] Task: Abstract the parsing logic into a plugin-based system.
-    - [ ] Decouple `AgentRegistry` from `GeminiMapper`.
-    - [ ] Implement `registerMapper` in `AgentRegistry`.
-    - [ ] Inject mappers from `extension.ts`.
+- [x] Task: Abstract the parsing logic into a plugin-based system. (22ae5cd)
+    - [x] Decouple `AgentRegistry` from `GeminiMapper`.
+    - [x] Implement `registerMapper` in `AgentRegistry`.
+    - [x] Inject mappers from `extension.ts`.
+- [~] Task: Implement ClaudeCodeMapper and CodexMapper skeletons.
 - [ ] Task: Conductor - User Manual Verification 'Multi-Agent Framework' (Protocol in workflow.md)
