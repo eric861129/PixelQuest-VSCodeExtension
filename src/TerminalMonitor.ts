@@ -16,13 +16,17 @@ export class TerminalMonitor {
 	public handleRawData(data: string, callback: (data: string) => void) {
 		this._buffer += data;
 
-		// Check if the data contains a newline character (indicates command execution or output block)
+		// Simple buffering: flush on newline or if buffer gets too large
 		if (data.includes('\r') || data.includes('\n')) {
 			const cleanData = this.stripAnsi(this._buffer);
 			if (cleanData.trim().length > 0) {
 				callback(cleanData);
 			}
-			this._buffer = ''; // Clear buffer after sending
+			this._buffer = ''; 
+		} else if (this._buffer.length > 1000) {
+			const cleanData = this.stripAnsi(this._buffer);
+			callback(cleanData);
+			this._buffer = '';
 		}
 	}
 
