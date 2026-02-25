@@ -54,52 +54,45 @@ export class PixelQuestViewProvider implements vscode.WebviewViewProvider {
 		}
 	}
 
-	private _getHtmlForWebview(webview: vscode.Webview) {
-		// Use a local script and style
+	private _getHtmlForWebview(webview: vscode.Webview): string {
 		const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'main.js'));
 		const styleMainUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'main.css'));
-
-		// Use a nonce to only allow a specific script to be run.
-		const nonce = getNonce();
-
+		const nonce = this._generateNonce();
 		const strings = getStrings();
 
 		return `<!DOCTYPE html>
 			<html lang="en">
 			<head>
 				<meta charset="UTF-8">
-
-				<!--
-					Use a content security policy to only allow loading styles from our extension directory,
-					and only allow scripts that have a specific nonce.
-					(See the 'scripts' section below.)
-				-->
 				<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
-
 				<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 				<link href="${styleMainUri}" rel="stylesheet">
-
 				<title>PixelQuest Console</title>
 			</head>
 			<body>
 				<div id="game-container">
-					<h1>PixelQuest</h1>
-					<canvas id="game-canvas"></canvas>
-					<div id="status-bar">${strings.waiting_command}</div>
+					<header>
+						<h1>PixelQuest</h1>
+						<div id="status-bar">${strings.waiting_command}</div>
+					</header>
+					<main>
+						<canvas id="game-canvas"></canvas>
+						<section id="activity-log-container">
+							<div id="activity-log"></div>
+						</section>
+					</main>
 				</div>
-
 				<script nonce="${nonce}" src="${scriptUri}"></script>
 			</body>
 			</html>`;
 	}
-}
 
-function getNonce() {
-	let text = '';
-	const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-	for (let i = 0; i < 32; i++) {
-		text += possible.charAt(Math.floor(Math.random() * possible.length));
+	private _generateNonce(): string {
+		let text = '';
+		const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+		for (let i = 0; i < 32; i++) {
+			text += possible.charAt(Math.floor(Math.random() * possible.length));
+		}
+		return text;
 	}
-	return text;
 }

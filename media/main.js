@@ -32,17 +32,23 @@
     });
 
     function updateUI(statusText, logText, prefix) {
-        // Update the big status text
-        statusBar.innerHTML = `${prefix || 'Status'}: ${statusText}`;
+        // Update the big status text safely
+        const label = prefix || 'Status';
+        statusBar.textContent = `${label}: ${statusText}`;
         
         // Update the activity log below
         const entry = document.createElement('div');
         entry.className = 'log-entry';
-        entry.innerText = `> ${logText}`;
-        logContainer.prepend(entry);
+        entry.textContent = `> ${logText}`;
         
-        // Keep only last 5 entries
-        while (logContainer.children.length > 5) {
+        if (logContainer.firstChild) {
+            logContainer.insertBefore(entry, logContainer.firstChild);
+        } else {
+            logContainer.appendChild(entry);
+        }
+        
+        // Keep only last 10 entries for better performance
+        while (logContainer.children.length > 10) {
             logContainer.removeChild(logContainer.lastChild);
         }
 

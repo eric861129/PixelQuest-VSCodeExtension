@@ -9,42 +9,49 @@ import { getStrings } from './i18n';
 
 export async function activate(context: vscode.ExtensionContext) {
 	const strings = getStrings();
-	console.log('PixelQuest: Activating Multi-Agent Terminal Monitor...');
+	const outputChannel = vscode.window.createOutputChannel('PixelQuest');
+	outputChannel.appendLine('PixelQuest: Initializing Services...');
 
+	// 1. Initialize Registry & Mappers
 	const agentRegistry = new AgentRegistry();
 	agentRegistry.registerMapper(new GeminiMapper());
 	agentRegistry.registerMapper(new ClaudeCodeMapper());
 	agentRegistry.registerMapper(new CodexMapper());
 	
-	const terminalMonitor = new TerminalMonitor();
+	// 2. Initialize View Provider
 	const provider = new PixelQuestViewProvider(context.extensionUri);
-
 	context.subscriptions.push(
-		vscode.window.registerWebviewViewProvider(PixelQuestViewProvider.viewType, provider));
+		vscode.window.registerWebviewViewProvider(PixelQuestViewProvider.viewType, provider)
+	);
 
-	// Strategy: Monitor ALL terminal streams for AI Agent keywords
+	// 3. Initialize Terminal Monitor
+	const terminalMonitor = new TerminalMonitor();
 	terminalMonitor.start((data) => {
 		const action = agentRegistry.process(data);
 		if (action) {
-			console.log(`PixelQuest: Action -> ${action.state} (${action.statusText})`);
+			outputChannel.appendLine(`[${action.state}] ${action.statusText}: ${action.logText}`);
 			provider.updateAction(action.state, action.statusText, action.logText);
 		}
 	});
 
-	context.subscriptions.push({
-		dispose: () => terminalMonitor.stop()
-	});
+	// Ensure cleanup on deactivation
+	context.subscriptions.push(
+		outputChannel,
+		{ dispose: () => terminalMonitor.stop() }
+	);
 
-	const helloCmd = vscode.commands.registerCommand('pixelquest-vscode-extension.helloWorld', () => {
-		vscode.window.showInformationMessage(strings.hello_world);
-	});
+	// 4. Register Commands
+	const commands = [
+		vscode.commands.registerCommand('pixelquest-vscode-extension.helloWorld', () => {
+			vscode.window.showInformationMessage(strings.hello_world);
+		}),
+		vscode.commands.registerCommand('pixelquest-vscode-extension.resetAgent', () => {
+			agentRegistry.reset();
+			vscode.window.showInformationMessage('PixelQuest: Agent detection has been reset.');
+		})
+	];
 
-	const resetCmd = vscode.commands.registerCommand('pixelquest-vscode-extension.resetAgent', () => {
-		agentRegistry.reset();
-		vscode.window.showInformationMessage('PixelQuest: Agent detection reset.');
-	});
-
-	context.subscriptions.push(helloCmd, resetCmd);
+	context.subscriptions.push(...commands);
 }
 
 export function deactivate() {}

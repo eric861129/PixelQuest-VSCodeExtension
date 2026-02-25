@@ -3,26 +3,49 @@ import { IAgentMapper, AgentAction } from './types';
 export class ClaudeCodeMapper implements IAgentMapper {
     public readonly agentId = 'claude-code';
 
+    private static readonly PATTERNS = {
+        DETECTION: /claude\s+code/i,
+        TOOL_CALL_GENERIC: /call:default_api:(write_file|grep_search|replace|read_file|list_directory)/i,
+        WRITE: /write_file|replace/i,
+        SEARCH: /grep_search/i,
+        READ: /read_file|list_directory/i,
+        SUCCESS: /task_complete/i,
+    };
+
     public detect(input: string): boolean {
-        // Detect Claude Code specific start or identity
-        return /claude\s+code/i.test(input) || /call:default_api:(write_file|grep_search|replace)/i.test(input);
+        return ClaudeCodeMapper.PATTERNS.DETECTION.test(input) || 
+               ClaudeCodeMapper.PATTERNS.TOOL_CALL_GENERIC.test(input);
     }
 
     public mapAction(input: string): AgentAction | undefined {
-        // Claude Code output often contains tool call names directly
-        if (/write_file|replace/i.test(input)) {
-            return { state: 'WORKING', statusText: 'Claude: Editing file...', logText: 'Executing write_file' };
+        if (ClaudeCodeMapper.PATTERNS.WRITE.test(input)) {
+            return { 
+                state: 'WORKING', 
+                statusText: 'Claude: Refining Arcana...', 
+                logText: 'Action: write_file/replace' 
+            };
         }
-        if (/grep_search/i.test(input)) {
-            return { state: 'WORKING', statusText: 'Claude: Searching...', logText: 'Executing grep_search' };
+        if (ClaudeCodeMapper.PATTERNS.SEARCH.test(input)) {
+            return { 
+                state: 'WORKING', 
+                statusText: 'Claude: Seeking Secrets...', 
+                logText: 'Action: grep_search' 
+            };
         }
-        if (/read_file/i.test(input)) {
-            return { state: 'WORKING', statusText: 'Claude: Reading...', logText: 'Executing read_file' };
+        if (ClaudeCodeMapper.PATTERNS.READ.test(input)) {
+            return { 
+                state: 'WORKING', 
+                statusText: 'Claude: Studying Scrolls...', 
+                logText: 'Action: read_file/list_directory' 
+            };
         }
         
-        // Success / Done
-        if (/task_complete/i.test(input)) {
-            return { state: 'SUCCESS', statusText: 'Claude Finished!', logText: 'Task completed' };
+        if (ClaudeCodeMapper.PATTERNS.SUCCESS.test(input)) {
+            return { 
+                state: 'SUCCESS', 
+                statusText: 'Claude Victory!', 
+                logText: 'Mission completed' 
+            };
         }
 
         return undefined;
