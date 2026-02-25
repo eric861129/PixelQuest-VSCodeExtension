@@ -10,5 +10,5 @@
     - [x] Decouple `AgentRegistry` from `GeminiMapper`.
     - [x] Implement `registerMapper` in `AgentRegistry`.
     - [x] Inject mappers from `extension.ts`.
-- [~] Task: Implement ClaudeCodeMapper and CodexMapper skeletons.
-- [ ] Task: Conductor - User Manual Verification 'Multi-Agent Framework' (Protocol in workflow.md)
+- [x] Task: Implement ClaudeCodeMapper and CodexMapper skeletons. (ce702b8)
+- [x] Task: Conductor - User Manual Verification 'Multi-Agent Framework' (Protocol in workflow.md)

@@ -6,5 +6,5 @@ This file tracks all major tracks for the project. Each track has its own detail
 ---
 
 ---
-- [~] **Track: Multi-Agent Terminal Action Monitoring**
+- [x] **Track: Multi-Agent Terminal Action Monitoring**
   *Link: [./tracks/agent_terminal_20260224/](./tracks/agent_terminal_20260224/)*
