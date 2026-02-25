@@ -1,41 +1,34 @@
-# AI Agent 動作列表 (Agent Actions)
+# AI Agent 動作映射規範 (Agent Actions Mapping)
 
-本文件詳述了 PixelQuest 如何將不同 AI Agent CLI 工具的終端機輸出映射至 RPG 遊戲動作。
+本文件定義了 PixelQuest 如何將 AI Agent 的技術操作轉化為 RPG 冒險世界中的視覺動作。
 
-## 1. 監控機制 (Monitoring Mechanism)
-PixelQuest 透過監聽 `onDidWriteTerminalData` 獲取終端機串流。系統會自動識別當前活躍的 Agent，並依據其特有的輸出格式（如 Gemini 的勾選符號）進行狀態切換。
+## 1. 核心映射邏輯 (Core Mapping)
 
-## 2. 核心狀態分類 (Agent States)
+| 分類 (Category) | RPG 冒險行為 | 技術標記 (Examples) | 視覺關鍵字 |
+| :--- | :--- | :--- | :--- |
+| **FILE_WRITE** | **攻擊 Boss (Attack)** | `WriteFile`, `Edit` | 揮劍、施放打擊、數字飄出 |
+| **FILE_READ** | **觀察弱點 (Observe)** | `ReadFile`, `get_file` | 掃描特效、偵測數據 |
+| **SEARCH** | **追蹤足跡 (Track)** | `grep_search`, `list_dir` | 尋找目標、追蹤線索 |
+| **SYSTEM_CMD** | **必殺技 (Skill)** | `Shell`, `command` | 畫面震動、強力特效 |
+| **GIT** | **存檔點 (Save Point)** | `git push`, `commit` | 水晶發光、進度保存 |
+| **TESTING** | **防禦加固 (Shield)** | `npm test`, `check` | 護盾出現、格擋效果 |
+| **COMMUNICATION**| **戰術擬定 (Tactics)** | `Thinking...`, `Prompt` | 思考動畫、等待指令 |
+| **SUCCESS** | **擊敗 Boss (Victory)** | `task_complete` | Boss 消失、掉落獎勵 |
 
-| 狀態 (State) | 語義 | 視覺表現 |
-| :--- | :--- | :--- |
-| **THINKING** | AI 正在思考或生成內容。 | 角色出現思考泡泡，畫布色調冷冽。 |
-| **WORKING** | AI 正在執行具體工具或指令。 | 角色進入戰鬥/工作姿態，畫布產生動作特效。 |
-| **SUCCESS** | AI 完成了當前任務。 | 角色 Victory Pose，顯示結算獎勵。 |
-| **WAITING** | AI 正在等待使用者回覆。 | 角色休息或頭上出現問號。 |
+## 2. 狀態機流程 (State Machine)
 
-## 3. Gemini CLI 特定映射 (Gemini Focus)
+1. **IDLE**: 角色在原點呼吸，等待事件。
+2. **WORKING**: 根據 `ActionCategory` 播放循環動畫 (Loop Animation)。
+3. **THINKING**: 播放思考動畫。
+4. **WAITING**: 角色靜止並看向使用者。
+5. **SUCCESS/FAILURE**: 播放結算動畫後回到 IDLE。
 
-| 終端機標記 (Visual Marker) | 對應動作 | 遊戲行為描述 |
-| :--- | :--- | :--- |
-| `✓ WriteFile` | **Writing file** | 角色對著鐵砧或代碼塊進行強力打擊。 |
-| `✓ Shell` | **Executing shell** | 角色進行魔法蓄力或準備大招。 |
-| `✓ ReadFolder` / `✓ ReadFile` | **Reading** | 角色打開巨大地圖或翻閱百科卷軸。 |
-| `Thinking...` | **Thinking** | 角色進入沈思狀態，頭上讀條。 |
-| `Task complete` | **Success** | 任務圓滿達成，Boss 消失。 |
+## 3. 擴展指南 (Extending)
 
-## 4. 未來擴充計畫 (Extended Agents)
-
-### A. Codex CLI
-- 預計捕捉：代碼块生成標記、檔案清單列出等行為。
-
-### B. Claude Code CLI
-- 預計捕捉：`write_file`, `grep_search` 等 JSONL 格式風格的終端機輸出。
-
-## 5. 處理邏輯
-1.  **Buffer Flush**: 當偵測到 `\r` 或 `\n` 時，將緩衝內容送入 Mapper 解析。
-2.  **Visual Sync**: 每一行動作偵測成功後，Webview 畫布將觸發閃爍效果以示同步。
+若要新增動作，請遵循以下步驟：
+1. 在 `src/agents/types.ts` 的 `ActionCategory` 加入新類別。
+2. 在 `GeminiMapper.ts` (或其他 Mapper) 中定義正則表達式識別該動作。
+3. 在 Webview 的繪圖邏輯中為該類別分配 `Sprite` 或顏色。
 
 ---
-*最後更新：2026-02-25*  
-*版本：v0.0.3 (Multi-Agent Support)*
+*Last Updated: 2026-02-25*

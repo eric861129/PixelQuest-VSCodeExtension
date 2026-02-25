@@ -1,36 +1,48 @@
 import * as assert from 'assert';
 import { AgentRegistry } from '../../agents/AgentRegistry';
+import { UniversalMapper } from '../../agents/UniversalMapper';
+import { AGENT_CONFIGS } from '../../agents/agentConfigs';
 
 suite('AgentRegistry Test Suite', () => {
-    test('Should detect Gemini and map its visual action markers', () => {
+    function setupRegistry() {
         const registry = new AgentRegistry();
+        for (const config of AGENT_CONFIGS) {
+            registry.registerMapper(new UniversalMapper(config));
+        }
+        return registry;
+    }
+
+    test('Should detect Gemini and map its battle actions', () => {
+        const registry = setupRegistry();
         
         // 1. Detect Gemini
         registry.process('Starting gemini-cli session...');
         
-        // 2. Map WriteFile visual marker
-        const action = registry.process('✓  WriteFile Writing to conductor\\...\\plan.md');
+        // 2. Map WriteFile to Attack Category
+        const action = registry.process('✓  WriteFile Writing to src/extension.ts');
         assert.ok(action);
         assert.strictEqual(action.state, 'WORKING');
-        assert.strictEqual(action.statusText, 'Writing file...');
-        assert.ok(action.logText.includes('WriteFile'));
+        assert.strictEqual(action.category, 'FILE_WRITE');
+        assert.strictEqual(action.metadata?.target, 'extension.ts');
     });
 
-    test('Should map Shell visual marker', () => {
-        const registry = new AgentRegistry();
+    test('Should map Shell to Ultimate Skill Category', () => {
+        const registry = setupRegistry();
         registry.process('gemini-cli');
         
-        const action = registry.process('✓  Shell git log -1 --format="%H"');
+        const action = registry.process('✓  Shell git status');
         assert.ok(action);
-        assert.strictEqual(action.statusText, 'Executing shell...');
+        assert.strictEqual(action.category, 'SYSTEM_CMD');
     });
 
-    test('Should map SUCCESS state', () => {
-        const registry = new AgentRegistry();
+    test('Should map Package Installation to Shopping Category', () => {
+        const registry = setupRegistry();
         registry.process('gemini-cli');
         
-        const action = registry.process('Task complete. Exit Code: 0');
+        const action = registry.process('✓  Shell npm install lodash');
+        // Note: Our current regex might favor Shell over npm install if both match. 
+        // In the config, npm install is higher priority.
         assert.ok(action);
-        assert.strictEqual(action.state, 'SUCCESS');
+        assert.strictEqual(action.category, 'SHOPPING');
     });
 });

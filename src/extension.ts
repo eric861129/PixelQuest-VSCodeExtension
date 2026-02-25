@@ -2,21 +2,20 @@ import * as vscode from 'vscode';
 import { PixelQuestViewProvider } from './PixelQuestViewProvider';
 import { TerminalMonitor } from './TerminalMonitor';
 import { AgentRegistry } from './agents/AgentRegistry';
-import { GeminiMapper } from './agents/GeminiMapper';
-import { ClaudeCodeMapper } from './agents/ClaudeCodeMapper';
-import { CodexMapper } from './agents/CodexMapper';
+import { UniversalMapper } from './agents/UniversalMapper';
+import { AGENT_CONFIGS } from './agents/agentConfigs';
 import { getStrings } from './i18n';
 
 export async function activate(context: vscode.ExtensionContext) {
 	const strings = getStrings();
 	const outputChannel = vscode.window.createOutputChannel('PixelQuest');
-	outputChannel.appendLine('PixelQuest: Initializing Services...');
+	outputChannel.appendLine('PixelQuest: Initializing Universal Agent System...');
 
-	// 1. Initialize Registry & Mappers
+	// 1. Initialize Registry with Universal Mappers from Config
 	const agentRegistry = new AgentRegistry();
-	agentRegistry.registerMapper(new GeminiMapper());
-	agentRegistry.registerMapper(new ClaudeCodeMapper());
-	agentRegistry.registerMapper(new CodexMapper());
+	for (const config of AGENT_CONFIGS) {
+		agentRegistry.registerMapper(new UniversalMapper(config));
+	}
 	
 	// 2. Initialize View Provider
 	const provider = new PixelQuestViewProvider(context.extensionUri);
@@ -29,12 +28,11 @@ export async function activate(context: vscode.ExtensionContext) {
 	terminalMonitor.start((data) => {
 		const action = agentRegistry.process(data);
 		if (action) {
-			outputChannel.appendLine(`[${action.state}] ${action.statusText}: ${action.logText}`);
+			outputChannel.appendLine(`[${action.category}] ${action.statusText}: ${action.logText}`);
 			provider.updateAction(action.state, action.statusText, action.logText);
 		}
 	});
 
-	// Ensure cleanup on deactivation
 	context.subscriptions.push(
 		outputChannel,
 		{ dispose: () => terminalMonitor.stop() }
@@ -47,7 +45,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		}),
 		vscode.commands.registerCommand('pixelquest-vscode-extension.resetAgent', () => {
 			agentRegistry.reset();
-			vscode.window.showInformationMessage('PixelQuest: Agent detection has been reset.');
+			vscode.window.showInformationMessage('PixelQuest: Universal Agent detection has been reset.');
 		})
 	];
 
